@@ -1,12 +1,13 @@
 #import "FirebaseAnalyticsPlugin.h"
-
-@import Firebase;
+@import FirebaseAnalytics;
 
 
 @implementation FirebaseAnalyticsPlugin
 
 - (void)pluginInitialize {
     NSLog(@"Starting Firebase Analytics plugin");
+
+    [FIROptions defaultOptions].deepLinkURLScheme = [FIROptions defaultOptions].bundleID;
 
     if(![FIRApp defaultApp]) {
         [FIRApp configure];
@@ -45,7 +46,7 @@
 - (void)setEnabled:(CDVInvokedUrlCommand *)command {
     bool enabled = [[command.arguments objectAtIndex:0] boolValue];
 
-    [FIRAnalytics setAnalyticsCollectionEnabled:enabled];
+    [[FIRAnalyticsConfiguration sharedInstance] setAnalyticsCollectionEnabled:enabled];
 
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -55,13 +56,6 @@
     NSString* name = [command.arguments objectAtIndex:0];
 
     [FIRAnalytics setScreenName:name screenClass:nil];
-
-    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
-
-- (void)resetAnalyticsData:(CDVInvokedUrlCommand *)command {
-    [FIRAnalytics resetAnalyticsData];
 
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
